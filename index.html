@@ -1,82 +1,126 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<style>
-    body {
-        background: -webkit-linear-gradient(to right, #ff7e5f, #feb47b);
-        /* Safari 5.1-6 */
-        background: -o-linear-gradient(to right, #ff7e5f, #feb47b);
-        /* Opera 11.1-12 */
-        background: -moz-linear-gradient(to right, #ff7e5f, #feb47b);
-        /* Firefox 3.6-15 */
-        background: linear-gradient(to right, #ff7e5f, #feb47b);
-        /* 标准语法 */
-    }
-</style>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高德地图示例</title>
+    <title>高德地图与选项卡示例</title>
     <style>
-        #mapContainer {
+        /* 页面布局 */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            height: 100%;
+        }
+
+        .tabs {
+            width: 20%;
+            /* 左侧五分之一 */
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tab:last-child {
+            border-bottom: none;
+        }
+
+        .tab.active {
+            background-color: #ddd;
+        }
+
+        .content {
+            width: 80%;
+            /* 右侧五分之四 */
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        #map {
             width: 100%;
-            height: 500px;
-        }
-    </style>
-    <style>
-        /* 未点击时的样式 */
-        a {
-            color: black;
-            /* 黑色 */
-            text-decoration: none;
-            /* 去掉下划线 */
-            font-size: 20px;
-            /* 字体大小 */
-            transition: color 0.3s;
-            /* 颜色过渡效果 */
+            height: 100%;
         }
 
-        /* 点击后的样式 */
-        a:visited {
-            color: #e991e9;
-            /* 紫色 */
+        #page1 {
+            background-color: red;
         }
 
-        /* 鼠标悬停时的样式 */
-        a:hover {
-            color: #00BFFF;
-            /* 天蓝色 */
+        #page2 {
+            background-color: green;
+        }
+
+        #page3 {
+            background-color: blue;
         }
     </style>
+    <!-- 高德地图 API -->
+    <script src="https://webapi.amap.com/maps?v=2.0&key=b6dbba2cc04cd371d7de984602aeca8e"></script>
 </head>
 
 <body>
-    <div id="mapContainer"></div>
+    <div class="container">
+        <!-- 左侧选项卡 -->
+        <div class="tabs">
+            <div class="tab active" data-target="#page1">页面 1</div>
+            <div class="tab" data-target="#page2">页面 2</div>
+            <div class="tab" data-target="#page3">页面 3</div>
+        </div>
+        <!-- 右侧内容区域 -->
+        <div class="content active" id="map-container">
+            <div id="map"></div>
+        </div>
+        <div class="content" id="page1"></div>
+        <div class="content" id="page2"></div>
+        <div class="content" id="page3"></div>
+    </div>
 
-    <!-- 引入高德地图API -->
-    <script src="https://webapi.amap.com/maps?v=2.0&key=b6dbba2cc04cd371d7de984602aeca8e"></script>
     <script>
         // 初始化地图
-        function initMap() {
-            // 创建地图实例
-            var map = new AMap.Map('mapContainer', {
-                zoom: 13, // 缩放级别
-                center: [116.397428, 39.90923], // 中心点坐标（北京天安门）
-            });
+        let map = new AMap.Map('map', {
+            zoom: 12, // 初始缩放级别
+            center: [116.397428, 39.90923], // 初始中心点（北京天安门）
+            mapStyle: 'amap://styles/satellite' // 默认卫星图
+        });
 
-            // 添加标记点
-            var marker = new AMap.Marker({
-                position: [116.397428, 39.90923], // 标记点坐标
-                title: '天安门', // 鼠标悬停显示的文字
-            });
-            map.add(marker);
-        }
+        // 选项卡切换逻辑
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.content');
 
-        // 页面加载完成后初始化地图
-        window.onload = initMap;
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有选项卡的激活状态
+                tabs.forEach(t => t.classList.remove('active'));
+                // 隐藏所有内容区域
+                contents.forEach(c => c.classList.remove('active'));
+                // 激活当前选项卡
+                tab.classList.add('active');
+                // 显示对应的内容区域
+                const target = document.querySelector(tab.getAttribute('data-target'));
+                target.classList.add('active');
+            });
+        });
     </script>
-    <img src="https://i0.hdslb.com/bfs/archive/c8fd97a40bf79f03e7b76cbc87236f612caef7b2.png" />
-    <a href="#" target="_blank">我叫pmy</a>
 </body>
 
 </html>
