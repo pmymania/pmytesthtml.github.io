@@ -4,47 +4,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高德地图与选项卡示例</title>
+    <title>选项卡式导航</title>
     <style>
-        /* 页面布局 */
-        body,
-        html {
-            margin: 0;
-            padding: 0;
+        /* 设置 html 和 body 的高度为 100% */
+        html,
+        body {
             height: 100%;
+            margin: 0;
             font-family: Arial, sans-serif;
         }
 
-        .container {
+        .bucontainer {
             display: flex;
             height: 100%;
         }
 
-        .tabs {
+        /* 选项卡容器 */
+        .tab-container {
+            display: flex;
             width: 20%;
-            /* 左侧五分之一 */
-            background-color: #f4f4f4;
-            display: flex;
             flex-direction: column;
+            height: 100%;
         }
 
-        .tab {
-            flex: 1;
+        /* 选项卡按钮样式 */
+        .tab-buttons {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 18px;
-            color: #333;
             border-bottom: 1px solid #ccc;
+            background-color: #f1f1f1;
         }
 
-        .tab:last-child {
-            border-bottom: none;
+        .tab-buttons button {
+            padding: 10px 20px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .tab.active {
+        .tab-buttons button:hover {
             background-color: #ddd;
+        }
+
+        .tab-buttons button.active {
+            background-color: #ccc;
+        }
+
+        /* 内容区域样式 */
+        .tab-content {
+            flex: 1;
+            /* 占满剩余空间 */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            overflow-y: auto;
+            /* 如果内容过多，允许滚动 */
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
         }
 
         .content {
@@ -61,41 +83,66 @@
             width: 100%;
             height: 100%;
         }
-
-        #page1 {
-            background-color: red;
-        }
-
-        #page2 {
-            background-color: green;
-        }
-
-        #page3 {
-            background-color: blue;
-        }
     </style>
-    <!-- 高德地图 API -->
     <script src="https://webapi.amap.com/maps?v=2.0&key=b6dbba2cc04cd371d7de984602aeca8e"></script>
 </head>
 
 <body>
-    <div class="container">
-        <!-- 左侧选项卡 -->
-        <div class="tabs">
-            <div class="tab active" data-target="#page1">页面 1</div>
-            <div class="tab" data-target="#page2">页面 2</div>
-            <div class="tab" data-target="#page3">页面 3</div>
+
+    <div class="bucontainer">
+        <!-- 选项卡容器 -->
+        <div class="tab-container">
+            <!-- 选项卡按钮 -->
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="tab1">选项卡 1</button>
+                <button class="tab-button" data-tab="tab2">选项卡 2</button>
+                <button class="tab-button" data-tab="tab3">选项卡 3</button>
+            </div>
+
+            <!-- 选项卡内容 -->
+            <div class="tab-content">
+                <div id="tab1" class="tab-pane active">
+                    <h2>选项卡 1 的内容</h2>
+                    <p>这是选项卡 1 的内容区域。</p>
+                </div>
+                <div id="tab2" class="tab-pane">
+                    <h2>选项卡 2 的内容</h2>
+                    <p>这是选项卡 2 的内容区域。</p>
+                </div>
+                <div id="tab3" class="tab-pane">
+                    <h2>选项卡 3 的内容</h2>
+                    <p>这是选项卡 3 的内容区域。</p>
+                </div>
+            </div>
         </div>
+
+
         <!-- 右侧内容区域 -->
         <div class="content active" id="map-container">
             <div id="map"></div>
         </div>
-        <div class="content" id="page1"></div>
-        <div class="content" id="page2"></div>
-        <div class="content" id="page3"></div>
     </div>
 
     <script>
+        // JavaScript 实现选项卡切换功能
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有按钮的 active 类
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                // 添加 active 类到当前按钮
+                button.classList.add('active');
+
+                // 隐藏所有内容区域
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                // 显示与当前按钮对应的内容区域
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
         // 初始化地图
         let map = new AMap.Map('map', {
             zoom: 12, // 初始缩放级别
@@ -121,6 +168,8 @@
             });
         });
     </script>
+
+
 </body>
 
 </html>
